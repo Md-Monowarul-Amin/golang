@@ -7,6 +7,7 @@ import (
 
 var conferenceName = "Go Conference"
 
+// var wg sync.WaitGroup
 const conferenceTickets int = 50
 
 var remainingTickets uint = 50
@@ -26,6 +27,7 @@ func main() {
 
 	greetUser()
 
+	// for i := 0; i < 1; i++ {
 	for {
 
 		firstName, lastName, email, userTickets := getUserInput()
@@ -35,7 +37,10 @@ func main() {
 
 			//Booking Infos
 			bookTicket(remainingTickets, userTickets, conferenceName, firstName, lastName, email)
-			// Call function Print First names
+			// go keyword for concurrency
+			helper.Wg.Add(1)
+			go helper.SendTicket(userTickets, firstName, lastName, email)
+
 			firstNames := getFirstNames()
 			fmt.Printf("The first names of the bookings are: %v\n", firstNames)
 
@@ -68,12 +73,11 @@ func main() {
 	case "New York":
 		fmt.Println("You are in New York")
 	case "Singapore", "Hong Kong":
-		fmt.Println("You are in Paris")
-	case "Mexico City":
 		fmt.Println("You are in Tokyo")
 	default:
 		fmt.Println("No valid city selected")
 	}
+	helper.Wg.Wait()
 }
 
 func greetUser() {
